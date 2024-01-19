@@ -1,5 +1,7 @@
-import Home from "@/templates/Home";
+"use client";
+
+import AddBorder from "@/components/AddBorder";
 
 export default function Border() {
-  return <Home />;
+  return <AddBorder />;
 }

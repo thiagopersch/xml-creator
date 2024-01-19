@@ -1,6 +1,5 @@
-import Home from '@/templates/Home'
+import Cards from "@/components/Cards";
+
 export default function HomePage() {
-  return (
-    <Home/>
-  )
+  return <Cards />;
 }
