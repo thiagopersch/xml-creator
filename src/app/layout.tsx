@@ -73,6 +73,14 @@ export default function RootLayout({
                           Grounds
                         </Button>
                       </Link>
+                      <Link href="/items-ground">
+                        <Button
+                          sx={{ color: "common.white" }}
+                          variant="outlined"
+                        >
+                          Itens do grounds
+                        </Button>
+                      </Link>
                       <Link href="/brush">
                         <Button
                           sx={{ color: "common.white" }}

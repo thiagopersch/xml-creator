@@ -1,3 +1,4 @@
+import { usePositiveNumberInput } from "@/hooks/usePositiveNumberInput";
 import {
   Box,
   Button,
@@ -13,10 +14,12 @@ import { useState } from "react";
 
 const AddBorder = () => {
   const [cardinalPoint, setCardinalPoint] = useState("");
+  const { value, handleChange } = usePositiveNumberInput();
 
-  const handleChange = (event: SelectChangeEvent) => {
+  const handleChangeSelect = (event: SelectChangeEvent) => {
     setCardinalPoint(event.target.value as string);
   };
+
   return (
     <Box
       sx={{
@@ -45,8 +48,15 @@ const AddBorder = () => {
         <form>
           <Box sx={{ display: "grid", gap: "1rem" }}>
             <Box sx={{ display: "flex", gap: "1rem" }}>
-              <TextField type="number" label="Id da borda" />
-              <FormControl fullWidth>
+              <TextField
+                type="number"
+                label="Id da borda"
+                variant="filled"
+                required
+                onChange={(e) => handleChange(e.target)}
+                inputProps={{ min: "0" }}
+              />
+              <FormControl required fullWidth variant="filled">
                 <InputLabel id="demo-simple-select-label">
                   Direcao da borda (Ponto Cardial)
                 </InputLabel>
@@ -54,8 +64,10 @@ const AddBorder = () => {
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   value={cardinalPoint}
+                  variant="filled"
                   label="Direcao da borda (Ponto Cardial)"
-                  onChange={handleChange}
+                  onChange={handleChangeSelect}
+                  required
                 >
                   <MenuItem value="s">s</MenuItem>
                   <MenuItem value="w">w</MenuItem>
@@ -72,8 +84,20 @@ const AddBorder = () => {
                 </Select>
               </FormControl>
             </Box>
-            <TextField type="text" label="Nome da borda" />
-            <TextField type="number" label="Id da sprite" />
+            <TextField
+              type="text"
+              label="Nome da borda"
+              variant="filled"
+              required
+            />
+            <TextField
+              type="number"
+              label="Id da sprite"
+              variant="filled"
+              onChange={(e) => handleChange(e.target)}
+              inputProps={{ min: "0" }}
+              required
+            />
           </Box>
           <Box
             sx={{
@@ -82,8 +106,12 @@ const AddBorder = () => {
               marginTop: 2,
             }}
           >
-            <Button variant="text">Cancelar</Button>
-            <Button variant="contained">Cadastrar</Button>
+            <Button variant="text" href="/">
+              Cancelar
+            </Button>
+            <Button variant="contained" type="submit">
+              Cadastrar
+            </Button>
           </Box>
         </form>
       </Box>
