@@ -50,13 +50,13 @@ const AddItemsGround = () => {
         <form>
           <Box sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
             <FormControl fullWidth required variant="filled">
-              <InputLabel id="demo-simple-select-label">Id da borda</InputLabel>
+              <InputLabel id="demo-simple-select-label">Ground ID</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
                 variant="filled"
                 value={value1}
-                label="Id da borda"
+                label="Ground ID"
                 onChange={handleChangeSelect}
                 required
               >

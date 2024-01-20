@@ -1,4 +1,5 @@
 // import '@/styles/globals.css';
+import { global } from "@/config/global.routes";
 import theme from "@/styles/theme";
 import {
   AppBar,
@@ -13,8 +14,21 @@ import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import Link from "next/link";
-import { Suspense } from "react";
+import { Fragment, Suspense } from "react";
 import Loading from "./loading";
+
+type Route = {
+  path: string;
+  name: string;
+};
+
+type Routes = {
+  [key: string]: Route[];
+};
+
+const routes: Routes = {
+  global,
+};
 
 const poppins = Poppins({
   weight: "500",
@@ -49,46 +63,21 @@ export default function RootLayout({
                       >
                         XML creator
                       </Typography>
-                      <Link href="/">
-                        <Button
-                          sx={{ color: "common.white" }}
-                          variant="outlined"
-                        >
-                          Início
-                        </Button>
-                      </Link>
-                      <Link href="/border">
-                        <Button
-                          sx={{ color: "common.white" }}
-                          variant="outlined"
-                        >
-                          Borders
-                        </Button>
-                      </Link>
-                      <Link href="/ground">
-                        <Button
-                          sx={{ color: "common.white" }}
-                          variant="outlined"
-                        >
-                          Grounds
-                        </Button>
-                      </Link>
-                      <Link href="/items-ground">
-                        <Button
-                          sx={{ color: "common.white" }}
-                          variant="outlined"
-                        >
-                          Itens do grounds
-                        </Button>
-                      </Link>
-                      <Link href="/brush">
-                        <Button
-                          sx={{ color: "common.white" }}
-                          variant="outlined"
-                        >
-                          Brushes
-                        </Button>
-                      </Link>
+                      {Object.entries(routes).map(([key, value]) => (
+                        <Fragment key={key}>
+                          {value.map((route) => (
+                            <Link href={route.path} key={route.path}>
+                              <Button
+                                sx={{ color: "common.white" }}
+                                variant="outlined"
+                                key={route.path}
+                              >
+                                {route.name}
+                              </Button>
+                            </Link>
+                          ))}
+                        </Fragment>
+                      ))}
                     </Toolbar>
                   </AppBar>
                 </Box>
