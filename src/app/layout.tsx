@@ -1,4 +1,3 @@
-// import '@/styles/globals.css';
 import { global } from "@/config/global.routes";
 import theme from "@/styles/theme";
 import {

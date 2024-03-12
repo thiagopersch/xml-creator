@@ -27,6 +27,10 @@ const global = [
     path: "/tileset",
     name: "Tileset",
   },
+  {
+    path: "/monsters",
+    name: "Monsters",
+  },
 ];
 
 export { global };
