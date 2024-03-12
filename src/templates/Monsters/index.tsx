@@ -17,8 +17,6 @@ const columns: GridColDef[] = [
     headerName: "Velocidade",
     sortable: false,
     width: 200,
-    // valueGetter: (params: GridValueGetterParams) =>
-    //   `${params.row.name || ""} ${params.row.race || ""}`,
   },
 ];
 
