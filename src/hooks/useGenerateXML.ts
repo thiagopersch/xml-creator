@@ -1,3 +1,17 @@
+export type AttackType = {
+  name?: string;
+  interval?: number;
+  minValueAttack?: number;
+  maxValueAttack?: number;
+};
+
+export type LootType = {
+  name?: string;
+  isCountMax?: boolean;
+  countmax?: string;
+  chance?: number;
+};
+
 const useGenerateXML = (data: any) => {
   const xmlString = `<?xml version="1.0" encoding="UTF-8"?>
 <monster name="${data.name}" description="a ${data.description}" race="${
@@ -37,11 +51,15 @@ const useGenerateXML = (data: any) => {
 		<flag canwalkonpoison="0"/>
 	</flags>
 	${
-    data.isAttack
+    data.attacks.length > 0
       ? `<attacks>
-      	<attack name="${data.attack.name}" interval="${data.attack.interval}" min="${data.attack.minValueAttack}" max="${data.attack.maxValueAttack}"/>
-		< /attacks>
-		`
+          ${data.attacks
+            .map(
+              (attack: AttackType) =>
+                `<attack name="${attack.name}" interval="${attack.interval}" min="-${attack.minValueAttack}" max="-${attack.maxValueAttack}"/>`
+            )
+            .join("\n          ")}
+    </attacks>`
       : ""
   }
 	<immunities>
@@ -62,7 +80,7 @@ const useGenerateXML = (data: any) => {
 		<immunity paralyze="${data.immunities.paralyze}"/>
 	</immunities>
   ${
-    data.isDefenses
+    data.defenses
       ? `
       <defenses armor="35" defense="35">
         <defense
@@ -97,36 +115,38 @@ const useGenerateXML = (data: any) => {
 		<element undefinedPercent="${data.elements.undefinedPercent}"/>
 	</elements>
   ${
-    data.isSummons
-      ? `
-      <summons>
-		    <summon name="${data.summons.name}" interval="${data.summons.interval}" chance="${data.summons.chance}" max="${data.summons.qtdMax}"/>
+    data.summons.length > 0
+      ? `<summons>
+		    ${data.summons
+          .map(
+            (summon: any) =>
+              `<summon name="${summon.name}" interval="${summon.interval}" chance="${summon.chance}" max="${summon.qtdMax}"/>`
+          )
+          .join("")}
 	    </summons>`
       : ""
   }
 	${
-    data.isVoices
-      ? `
-        <voices interval="5000" chance="10">
+    data.voices
+      ? `<voices interval="5000" chance="10">
 		      <voice sentence="${data.voices.message}" yell="1"/>
-	      </voices>
-      `
+	      </voices>`
       : ""
   }
   ${
-    data.isLoot
-      ? `
-        <loot>
-          <item name="${data.loot.name}" ${
-          data.loot.isCountMax ? `countmax="${data.loot.countmax}"` : ""
-        } chance="${data.loot.chance}"/>
-        </loot>
-      `
+    data.loots.length > 0
+      ? `  <loot>
+          ${data.loots
+            .map((loot: LootType) =>
+              loot.isCountMax
+                ? `<item name="${loot.name}" countmax="${loot.countmax}" chance="${loot.chance}"/>`
+                : `<item name="${loot.name}" chance="${loot.chance}"/>`
+            )
+            .join("\n          ")}
+    </loot>`
       : ""
   }
-	
-</monster>
-  `;
+</monster>`;
   return [xmlString];
 };
 

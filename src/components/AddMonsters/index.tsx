@@ -14,6 +14,8 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
+import Attacks from "./Attacks";
+import Loots from "./Loots";
 
 const AddMonsters = () => {
   const [xmlString, setXmlString] = useState("");
@@ -24,6 +26,7 @@ const AddMonsters = () => {
     experience: 0,
     speed: 0,
     heath: { min: 0, max: 0 },
+    heathMax: 0,
     looktype: {
       type: 0,
       head: 0,
@@ -96,12 +99,60 @@ const AddMonsters = () => {
 
   const [race, setRace] = useState(monster.race);
 
+  const [attacks, setAttacks] = useState<any[]>([
+    { name: "", interval: 0, minValueAttack: 0, maxValueAttack: 0 },
+  ]);
+  const [loots, setLoots] = useState<any[]>([
+    { name: "", isCountMax: false, countmax: 0, chance: 0 },
+  ]);
+
+  const handleAddAttack = () => {
+    setAttacks((prevAttacks) => [
+      ...prevAttacks,
+      { name: "", interval: 0, minValueAttack: 0, maxValueAttack: 0 },
+    ]);
+  };
+
+  const handleAddLoot = () => {
+    setLoots((prevLoots) => [
+      ...prevLoots,
+      { name: "", isCountMax: false, countmax: 0, chance: 0 },
+    ]);
+  };
+
+  const handleAttackChange = (index: number, updatedAttack: any) => {
+    setAttacks((prevAttacks) =>
+      prevAttacks.map((attack, i) => (i === index ? updatedAttack : attack))
+    );
+  };
+
+  const handleRemoveAttack = (index: number) => {
+    setAttacks((prevAttacks) => prevAttacks.filter((_, i) => i !== index));
+  };
+
+  const handleLootChange = (index: number, updatedLoot: any) => {
+    setLoots((prevLoots) =>
+      prevLoots.map((loot, i) => (i === index ? updatedLoot : loot))
+    );
+  };
+
+  const handleRemoveLoot = (index: number) => {
+    setLoots((prevLoots) => prevLoots.filter((_, i) => i !== index));
+  };
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    setMonster((prevMonster) => ({
-      ...prevMonster,
-      [name]: value,
-    }));
+    if (name.includes("heath.")) {
+      setMonster((prevMonster) => ({
+        ...prevMonster,
+        [name]: value,
+      }));
+    } else {
+      setMonster((prevMonster) => ({
+        ...prevMonster,
+        [name]: value,
+      }));
+    }
   };
 
   const handleNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -114,6 +165,7 @@ const AddMonsters = () => {
 
   const handleChangeRace = (event: SelectChangeEvent) => {
     setRace(event.target.value as string);
+    setMonster((prevMonster) => ({ ...prevMonster, race: event.target.value }));
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -125,12 +177,6 @@ const AddMonsters = () => {
       heath: {
         min: monster.heath.min,
         max: monster.heath.max,
-      },
-      attack: {
-        name: monster.attack.name,
-        interval: monster.attack.interval,
-        minValueAttack: monster.attack.minValueAttack,
-        maxValueAttack: monster.attack.maxValueAttack,
       },
       immunities: {
         physical: monster.immunities.physical,
@@ -170,16 +216,22 @@ const AddMonsters = () => {
         chance: monster.summons.chance,
         qtdMax: monster.summons.qtdMax,
       },
-      loot: {
-        name: monster.loot.name,
-        isCountMax: monster.loot.isCountMax,
-        countmax: monster.loot.countmax,
-        chance: monster.loot.chance,
+      voices: {
+        message: monster.voices.message,
       },
+      isLoot: loots.length > 0,
+      loot: loots,
+      isAttack: attacks.length > 0,
+      attack: attacks,
     };
 
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    const [generatedXmlString] = useGenerateXML(data);
+    const [generatedXmlString] = useGenerateXML({
+      ...monster,
+      ...data,
+      attacks,
+      loots: loots,
+    });
     setXmlString(generatedXmlString);
   };
 
@@ -241,8 +293,9 @@ const AddMonsters = () => {
               label="Experience"
               variant="filled"
               value={monster.experience}
-              onChange={handleNumberChange}
+              onChange={handleChange}
               fullWidth
+              required
             />
             <TextField
               type="number"
@@ -250,17 +303,19 @@ const AddMonsters = () => {
               label="Speed"
               variant="filled"
               value={monster.speed}
-              onChange={handleNumberChange}
+              onChange={handleChange}
               fullWidth
+              required
             />
             <TextField
               type="number"
-              name="heath.min"
+              name="heathmin"
               label="Health Min"
               variant="filled"
               value={monster.heath.min}
-              onChange={handleNumberChange}
+              onChange={handleChange}
               fullWidth
+              required
             />
             <TextField
               type="number"
@@ -268,7 +323,7 @@ const AddMonsters = () => {
               label="Health Max"
               variant="filled"
               value={monster.heath.max}
-              onChange={handleNumberChange}
+              onChange={handleChange}
               fullWidth
             />
           </Box>
@@ -353,44 +408,8 @@ const AddMonsters = () => {
               fullWidth
             />
           </Box>
-          {/* Attacks */}
-          <Box
-            display="grid"
-            gridTemplateColumns="1fr 1fr 1fr"
-            gap="1rem"
-            margin="1rem 0"
-            justifyContent="start"
-          >
-            <TextField
-              type="number"
-              name="attack.interval"
-              label="Attack Interval"
-              variant="filled"
-              value={monster.attack.interval}
-              onChange={handleNumberChange}
-              fullWidth
-            />
-            <TextField
-              type="number"
-              name="attack.minValueAttack"
-              label="Attack Min Value"
-              variant="filled"
-              value={monster.attack.minValueAttack}
-              onChange={handleNumberChange}
-              fullWidth
-            />
-            <TextField
-              type="number"
-              name="attack.maxValueAttack"
-              label="Attack Max Value"
-              variant="filled"
-              value={monster.attack.maxValueAttack}
-              onChange={handleNumberChange}
-              fullWidth
-            />
-          </Box>
           {/* Immunities */}
-          {/* <Box
+          <Box
             display="grid"
             gridTemplateColumns="1fr 1fr 1fr 1fr 1fr"
             gap="1rem"
@@ -532,9 +551,9 @@ const AddMonsters = () => {
               onChange={handleNumberChange}
               fullWidth
             />
-          </Box> */}
+          </Box>
           {/* Elements */}
-          {/* <Box
+          <Box
             display="grid"
             gridTemplateColumns="1fr 1fr 1fr 1fr 1fr"
             gap="1rem"
@@ -658,7 +677,7 @@ const AddMonsters = () => {
               onChange={handleNumberChange}
               fullWidth
             />
-          </Box> */}
+          </Box>
           {/* Summons */}
           <Box
             display="grid"
@@ -695,32 +714,53 @@ const AddMonsters = () => {
               fullWidth
             />
           </Box>
-          {/* Loots */}
+          {/* Attacks */}
           <Box
             display="grid"
-            gridTemplateColumns="1fr 1fr 1fr"
+            gridTemplateColumns="1fr"
             gap="1rem"
             margin="1rem 0"
             justifyContent="start"
           >
-            <TextField
-              type="number"
-              name="loot.countmax"
-              label="Loot Count Max"
-              variant="filled"
-              value={monster.loot.countmax}
-              onChange={handleNumberChange}
-              fullWidth
-            />
-            <TextField
-              type="number"
-              name="loot.chance"
-              label="Loot Chance"
-              variant="filled"
-              value={monster.loot.chance}
-              onChange={handleNumberChange}
-              fullWidth
-            />
+            <Typography variant="h5" color="primary.light" fontWeight="bold">
+              Attacks{" "}
+              <Button variant="outlined" onClick={handleAddAttack}>
+                Adicionar Attack
+              </Button>
+            </Typography>
+            {attacks.map((attack, index) => (
+              <Attacks
+                key={index}
+                index={index}
+                attack={attack}
+                onAttackChange={handleAttackChange}
+                onRemoveAttack={handleRemoveAttack}
+              />
+            ))}
+          </Box>
+          {/* Loots */}
+          <Box
+            display="grid"
+            gridTemplateColumns="1fr"
+            gap="1rem"
+            margin="1rem 0"
+            justifyContent="start"
+          >
+            <Typography variant="h5" color="primary.light" fontWeight="bold">
+              Loots{" "}
+              <Button variant="outlined" onClick={handleAddLoot}>
+                Adicionar Loot
+              </Button>
+            </Typography>
+            {loots.map((loot, index) => (
+              <Loots
+                key={index}
+                index={index}
+                loot={loot}
+                onLootChange={handleLootChange}
+                onRemoveLoot={handleRemoveLoot}
+              />
+            ))}
           </Box>
           <Box
             display="flex"
@@ -752,11 +792,11 @@ const AddMonsters = () => {
         >
           <Editor
             value={xmlString}
-            height="100%"
+            height="90vh"
             defaultLanguage="xml"
             theme="vs-dark"
             loading="Gerando..."
-            width="60%"
+            width="99%"
           />
         </Box>
       )}
