@@ -26,7 +26,6 @@ const AddMonsters = () => {
     experience: 0,
     speed: 0,
     heath: { min: 0, max: 0 },
-    heathMax: 0,
     looktype: {
       type: 0,
       head: 0,
@@ -98,7 +97,6 @@ const AddMonsters = () => {
   });
 
   const [race, setRace] = useState(monster.race);
-
   const [attacks, setAttacks] = useState<any[]>([
     { name: "", interval: 0, minValueAttack: 0, maxValueAttack: 0 },
   ]);
@@ -142,17 +140,10 @@ const AddMonsters = () => {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    if (name.includes("heath.")) {
-      setMonster((prevMonster) => ({
-        ...prevMonster,
-        [name]: value,
-      }));
-    } else {
-      setMonster((prevMonster) => ({
-        ...prevMonster,
-        [name]: value,
-      }));
-    }
+    setMonster((prevMonster) => ({
+      ...prevMonster,
+      [name]: value,
+    }));
   };
 
   const handleNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -309,7 +300,7 @@ const AddMonsters = () => {
             />
             <TextField
               type="number"
-              name="heathmin"
+              name="heath.min"
               label="Health Min"
               variant="filled"
               value={monster.heath.min}
