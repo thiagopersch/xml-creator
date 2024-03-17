@@ -17,7 +17,7 @@ const useGenerateXML = (data: any) => {
 <monster name="${data.name}" description="a ${data.description}" race="${
     data.race
   }" experience="${data.experience}" speed="${data.speed}">
-	<health now="${data.heath.min}" max="${data.heath.max}"/>
+	<health now="${data.heathMin}" max="${data.heathMax}"/>
 	<look type="${data.looktype.type}" head="${data.looktype.head}" body="${
     data.looktype.body
   }" legs="${data.looktype.legs}" feet="${data.looktype.feet}" addons="${

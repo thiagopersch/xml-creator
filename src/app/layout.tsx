@@ -1,20 +1,12 @@
 import { global } from "@/config/global.routes";
-import theme from "@/styles/theme";
-import {
-  AppBar,
-  Box,
-  Button,
-  CssBaseline,
-  ThemeProvider,
-  Toolbar,
-  Typography,
-} from "@mui/material";
+import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import Link from "next/link";
 import { Fragment, Suspense } from "react";
 import Loading from "./loading";
+import Providers from "./providers";
 
 type Route = {
   path: string;
@@ -46,11 +38,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-br">
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
+      <Providers>
         <body className={poppins.className}>
           <AppRouterCacheProvider>
-            <main className="flex min-h-screen flex-col items-center justify-between p-24">
+            <main className="flex min-h-screen flex-col items-center flex-wrap justify-between p-24">
               <Suspense fallback={<Loading />}>
                 <Box sx={{ flexGrow: 1 }}>
                   <AppBar position="static">
@@ -62,21 +53,29 @@ export default function RootLayout({
                       >
                         XML creator
                       </Typography>
-                      {Object.entries(routes).map(([key, value]) => (
-                        <Fragment key={key}>
-                          {value.map((route) => (
-                            <Link href={route.path} key={route.path}>
-                              <Button
-                                sx={{ color: "common.white" }}
-                                variant="outlined"
-                                key={route.path}
-                              >
-                                {route.name}
-                              </Button>
-                            </Link>
-                          ))}
-                        </Fragment>
-                      ))}
+                      <Box
+                        display="flex"
+                        gap={1}
+                        alignItems="center"
+                        justifyContent="center"
+                        flex="wrap"
+                      >
+                        {Object.entries(routes).map(([key, value]) => (
+                          <Fragment key={key}>
+                            {value.map((route) => (
+                              <Link href={route.path} key={route.path}>
+                                <Button
+                                  sx={{ color: "common.white" }}
+                                  variant="outlined"
+                                  key={route.path}
+                                >
+                                  {route.name}
+                                </Button>
+                              </Link>
+                            ))}
+                          </Fragment>
+                        ))}
+                      </Box>
                     </Toolbar>
                   </AppBar>
                 </Box>
@@ -85,7 +84,7 @@ export default function RootLayout({
             </main>
           </AppRouterCacheProvider>
         </body>
-      </ThemeProvider>
+      </Providers>
     </html>
   );
 }
