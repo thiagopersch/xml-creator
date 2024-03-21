@@ -29,12 +29,12 @@ const Summons = () => {
     <Box
       sx={{
         display: "grid",
-        gridTemplateColumns: "1fr 1fr",
+        gridTemplateColumns: "1fr 1fr 1fr 1fr",
         gap: "0.5rem",
       }}
     >
       <TextField
-        type="number"
+        type="text"
         name="summonsName"
         label="Summons Name"
         variant="filled"

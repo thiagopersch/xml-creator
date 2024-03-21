@@ -39,9 +39,7 @@ const Loots = ({ index, loot, onLootChange, onRemoveLoot }: LootProps) => {
 
   return (
     <FormControl fullWidth>
-      <FormLabel sx={{ margin: "1rem 0" }}>
-        Loot: {loot.name} {index + 1}
-      </FormLabel>
+      <FormLabel sx={{ margin: "1rem 0" }}>Item: {loot.name}</FormLabel>
       <FormGroup>
         <Box
           display="grid"

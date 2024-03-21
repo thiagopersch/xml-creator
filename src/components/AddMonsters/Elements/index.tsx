@@ -30,7 +30,7 @@ const Elements = () => {
     <Box
       sx={{
         display: "grid",
-        gridTemplateColumns: "1fr 1fr 1fr",
+        gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr",
         gap: "0.5rem",
       }}
     >
