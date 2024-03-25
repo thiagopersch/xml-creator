@@ -30,18 +30,16 @@ const Basics = ({ monstros, monster }: DatamonstroBasics) => {
     monstros(monstro);
   }, [monstro, monstros]);
 
-  const [race, setRace] = useState(monstro.race);
-
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setMonstro((prevmonstro) => ({
       ...prevmonstro,
       [name]: value,
+      description: value.toLowerCase(), // Atualizando a descrição com o nome do monstro em minúsculas
     }));
   };
 
   const handleChangeRace = (event: SelectChangeEvent) => {
-    setRace(event.target.value as string);
     setMonstro((prevmonstro) => ({ ...prevmonstro, race: event.target.value }));
   };
 
