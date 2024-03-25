@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import {
   Box,
   FormControl,
@@ -7,14 +8,15 @@ import {
   SelectChangeEvent,
   TextField,
 } from "@mui/material";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
-type DataMonsterBasics = {
-  monsters: Dispatch<SetStateAction<any>>;
+type DatamonstroBasics = {
+  monstros: Dispatch<SetStateAction<any>>;
+  monster: any;
 };
 
-const Basics = ({ monsters }: DataMonsterBasics) => {
-  const [monster, setMonster] = useState({
+const Basics = ({ monstros, monster }: DatamonstroBasics) => {
+  const [monstro, setMonstro] = useState({
     name: "",
     description: "",
     race: "",
@@ -23,19 +25,24 @@ const Basics = ({ monsters }: DataMonsterBasics) => {
     heathMin: 0,
     heathMax: 0,
   });
-  const [race, setRace] = useState(monster.race);
+
+  useEffect(() => {
+    monstros(monstro);
+  }, [monstro, monstros]);
+
+  const [race, setRace] = useState(monstro.race);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    setMonster((prevMonster) => ({
-      ...prevMonster,
+    setMonstro((prevmonstro) => ({
+      ...prevmonstro,
       [name]: value,
     }));
   };
 
   const handleChangeRace = (event: SelectChangeEvent) => {
     setRace(event.target.value as string);
-    setMonster((prevMonster) => ({ ...prevMonster, race: event.target.value }));
+    setMonstro((prevmonstro) => ({ ...prevmonstro, race: event.target.value }));
   };
 
   return (
@@ -52,7 +59,7 @@ const Basics = ({ monsters }: DataMonsterBasics) => {
           name="name"
           label="Nome do monstro"
           variant="filled"
-          value={monster.name}
+          value={monstro.name}
           onChange={handleChange}
           required
           fullWidth
@@ -64,7 +71,7 @@ const Basics = ({ monsters }: DataMonsterBasics) => {
           <Select
             labelId="races"
             id="race"
-            value={race}
+            value={monstro.race}
             variant="filled"
             onChange={handleChangeRace}
             required
@@ -82,7 +89,7 @@ const Basics = ({ monsters }: DataMonsterBasics) => {
           name="experience"
           label="Experience"
           variant="filled"
-          value={monster.experience}
+          value={monstro.experience}
           onChange={handleChange}
           fullWidth
           required
@@ -92,7 +99,7 @@ const Basics = ({ monsters }: DataMonsterBasics) => {
           name="speed"
           label="Speed"
           variant="filled"
-          value={monster.speed}
+          value={monstro.speed}
           onChange={handleChange}
           fullWidth
           required
@@ -109,7 +116,7 @@ const Basics = ({ monsters }: DataMonsterBasics) => {
           name="heathMin"
           label="Health Min"
           variant="filled"
-          value={monster.heathMin}
+          value={monstro.heathMin}
           onChange={handleChange}
           fullWidth
           required
@@ -119,7 +126,7 @@ const Basics = ({ monsters }: DataMonsterBasics) => {
           name="heathMax"
           label="Health Max"
           variant="filled"
-          value={monster.heathMax}
+          value={monstro.heathMax}
           onChange={handleChange}
           required
           fullWidth

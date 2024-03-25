@@ -129,7 +129,7 @@ const AddMonsters: React.FC<AddMonstersProps> = ({ initialData }) => {
             padding: "1rem 0",
           }}
         >
-          <Basics {...monster} monsters={setMonster} />
+          <Basics monstros={setMonster} monster={monster} />
         </Box>
         {/* Looktypes */}
         <Box
