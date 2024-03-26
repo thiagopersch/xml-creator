@@ -1,40 +1,237 @@
 "use client";
 
 import useGenerateXML from "@/hooks/useGenerateXML";
-import { DataMonsterBasics } from "@/model/Types";
-import { Editor } from "@monaco-editor/react";
 import {
   Box,
   Button,
   Checkbox,
+  FormControl,
   FormControlLabel,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  TextField,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Attacks from "./Attacks";
-import Basics from "./Basics";
 import Elements from "./Elements";
 import Immunities from "./Immunities";
-import Looktypes from "./Looktypes";
 import Loots from "./Loots";
 import Summons from "./Summons";
 
-type AddMonstersProps = {
-  initialData: DataMonsterBasics;
+export type DataMonsterBasics = {
+  name?: string;
+  description?: string;
+  race?: string;
+  experience?: number;
+  speed?: number;
+  heathMin?: number;
+  heathMax?: number;
+  looktype: {
+    type: number;
+    head: number;
+    body: number;
+    legs: number;
+    feet: number;
+    addons: number;
+    typeex: number;
+    corpse: number;
+  };
+  isAttack?: boolean;
+  attack: {
+    name?: string;
+    interval?: number;
+    minValueAttack?: number;
+    maxValueAttack?: number;
+  }[];
+  isImmunities?: boolean;
+  immunities?: {
+    physical?: number;
+    energy?: number;
+    fire?: number;
+    poison?: number;
+    earth?: number;
+    ice?: number;
+    holy?: number;
+    death?: number;
+    drown?: number;
+    lifedrain?: number;
+    manadrain?: number;
+    outfit?: number;
+    drunk?: number;
+    invisible?: number;
+    paralyze?: number;
+  };
+  isDefenses?: boolean;
+  isElements?: boolean;
+  elements?: {
+    firePercent?: number;
+    energyPercent?: number;
+    icePercent?: number;
+    poisonPercent?: number;
+    holyPercent?: number;
+    deathPercent?: number;
+    drownPercent?: number;
+    earthPercent?: number;
+    physicalPercent?: number;
+    lifedrainPercent?: number;
+    manadrainPercent?: number;
+    healingPercent?: number;
+    undefinedPercent?: number;
+  };
+  isSummons?: boolean;
+  summons: {
+    name?: string;
+    interval?: number;
+    chance?: number;
+    qtdMax?: number;
+  }[];
+  isVoices?: boolean;
+  voices: {
+    message?: string;
+  };
+  isLoot?: boolean;
+  loot: {
+    name?: string;
+    isCountMax?: boolean;
+    countmax?: number;
+    chance?: number;
+  }[];
 };
 
-const AddMonsters: React.FC<AddMonstersProps> = ({ initialData }) => {
-  const [monster, setMonster] = useState<DataMonsterBasics>(initialData);
+const AddMonsters = () => {
+  const [monsterData, setMonsterData] = useState<DataMonsterBasics>({
+    name: "",
+    description: "",
+    race: "",
+    experience: 0,
+    speed: 0,
+    heathMin: 0,
+    heathMax: 0,
+    looktype: {
+      type: 0,
+      head: 0,
+      body: 0,
+      legs: 0,
+      feet: 0,
+      addons: 0,
+      typeex: 0,
+      corpse: 0,
+    },
+    isAttack: false,
+    attack: [
+      {
+        name: "",
+        interval: 0,
+        minValueAttack: 0,
+        maxValueAttack: 0,
+      },
+    ],
+    isImmunities: false,
+    immunities: {
+      physical: 0,
+      energy: 0,
+      fire: 0,
+      poison: 0,
+      earth: 0,
+      ice: 0,
+      holy: 0,
+      death: 0,
+      drown: 0,
+      lifedrain: 0,
+      manadrain: 0,
+      outfit: 0,
+      drunk: 0,
+      invisible: 0,
+      paralyze: 0,
+    },
+    isDefenses: false,
+    isElements: false,
+    elements: {
+      firePercent: 0,
+      energyPercent: 0,
+      icePercent: 0,
+      poisonPercent: 0,
+      holyPercent: 0,
+      deathPercent: 0,
+      drownPercent: 0,
+      earthPercent: 0,
+      physicalPercent: 0,
+      lifedrainPercent: 0,
+      manadrainPercent: 0,
+      healingPercent: 0,
+      undefinedPercent: 0,
+    },
+    isSummons: false,
+    summons: [
+      {
+        name: "",
+        interval: 0,
+        chance: 0,
+        qtdMax: 0,
+      },
+    ],
+    isVoices: false,
+    voices: {
+      message: "",
+    },
+    isLoot: false,
+    loot: [
+      {
+        name: "",
+        isCountMax: false,
+        countmax: 0,
+        chance: 0,
+      },
+    ],
+  });
+
+  useEffect(() => {
+    setMonsterData((prevmonstro) => ({
+      ...prevmonstro,
+      description: prevmonstro.name ? prevmonstro.name.toLowerCase() : "",
+    }));
+  }, [monsterData.name]);
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setMonsterData((prevmonstro) => ({
+      ...prevmonstro,
+      [name]: value,
+    }));
+  };
+
+  const handleChangeRace = (event: SelectChangeEvent) => {
+    setMonsterData((prevmonstro) => ({
+      ...prevmonstro,
+      race: event.target.value,
+    }));
+  };
+
+  const handleNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setMonsterData((prevmonstro) => ({
+      ...prevmonstro,
+      [name]: Number(value),
+      looktype: {
+        ...prevmonstro.looktype,
+        [name]: Number(value), // Converte o valor para número
+      },
+    }));
+  };
+
   const [xmlString, setXmlString] = useState<string>("");
   const [hasImmunities, setHasImmunities] = useState<boolean>(
-    !!initialData?.isImmunities
+    !!monsterData?.isImmunities
   );
   const [hasElements, setHasElements] = useState<boolean>(
-    !!initialData?.isElements
+    !!monsterData?.isElements
   );
 
   const [attacks, setAttacks] = useState<DataMonsterBasics[]>(
-    initialData?.attack?.map((attack: any) => ({ ...attack })) || [
+    monsterData?.attack?.map((attack: any) => ({ ...attack })) || [
       {
         name: "",
         interval: 0,
@@ -97,8 +294,10 @@ const AddMonsters: React.FC<AddMonstersProps> = ({ initialData }) => {
     event.preventDefault();
 
     const data = {
-      ...monster,
+      ...monsterData,
       attack: attacks,
+      isImmunities: hasImmunities,
+      isElements: hasElements,
     };
 
     console.log({ data });
@@ -112,12 +311,7 @@ const AddMonsters: React.FC<AddMonstersProps> = ({ initialData }) => {
   return (
     <>
       <form onSubmit={handleSubmit}>
-        <Typography
-          variant="h4"
-          color="primary.light"
-          fontWeight="bold"
-          gutterBottom
-        >
+        <Typography variant="h4" color="gray" fontWeight="bold" gutterBottom>
           Dados do monster
         </Typography>
         {/* Dados básicos */}
@@ -129,7 +323,88 @@ const AddMonsters: React.FC<AddMonstersProps> = ({ initialData }) => {
             padding: "1rem 0",
           }}
         >
-          <Basics monstros={setMonster} monster={monster} />
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr 1fr 1fr",
+              gap: "0.5rem",
+            }}
+          >
+            <TextField
+              type="text"
+              name="name"
+              label="Nome do monstro"
+              variant="filled"
+              value={monsterData.name}
+              onChange={handleChange}
+              required
+              fullWidth
+            />
+            <FormControl fullWidth required>
+              <InputLabel id="select-races">Raças</InputLabel>
+              <Select
+                labelId="select-races"
+                id="select-races"
+                variant="filled"
+                value={monsterData.race}
+                label="Raças"
+                onChange={handleChangeRace}
+              >
+                <MenuItem value="blood">blood</MenuItem>
+                <MenuItem value="venom">venom</MenuItem>
+                <MenuItem value="energy">energy</MenuItem>
+                <MenuItem value="fire">fire</MenuItem>
+                <MenuItem value="undead">undead</MenuItem>
+              </Select>
+            </FormControl>
+            <TextField
+              type="number"
+              name="experience"
+              label="Experience"
+              variant="filled"
+              value={monsterData.experience}
+              onChange={handleChange}
+              fullWidth
+              required
+            />
+            <TextField
+              type="number"
+              name="speed"
+              label="Speed"
+              variant="filled"
+              value={monsterData.speed}
+              onChange={handleChange}
+              fullWidth
+              required
+            />
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              gap: "1rem",
+            }}
+          >
+            <TextField
+              type="number"
+              name="heathMin"
+              label="Health Min"
+              variant="filled"
+              value={monsterData.heathMin}
+              onChange={handleChange}
+              fullWidth
+              required
+            />
+            <TextField
+              type="number"
+              name="heathMax"
+              label="Health Max"
+              variant="filled"
+              value={monsterData.heathMax}
+              onChange={handleChange}
+              required
+              fullWidth
+            />
+          </Box>
         </Box>
         {/* Looktypes */}
         <Box
@@ -138,7 +413,86 @@ const AddMonsters: React.FC<AddMonstersProps> = ({ initialData }) => {
             gap: "1rem",
           }}
         >
-          <Looktypes />
+          <TextField
+            type="number"
+            name="type"
+            label="Looktype"
+            variant="filled"
+            value={monsterData.looktype.type}
+            onChange={handleNumberChange}
+            required
+            fullWidth
+          />
+          <TextField
+            type="number"
+            name="head"
+            label="Looktype Head"
+            variant="filled"
+            value={monsterData.looktype.head}
+            onChange={handleNumberChange}
+            required
+            fullWidth
+          />
+          <TextField
+            type="number"
+            name="body"
+            label="Looktype Body"
+            variant="filled"
+            value={monsterData.looktype.body}
+            onChange={handleNumberChange}
+            required
+            fullWidth
+          />
+          <TextField
+            type="number"
+            name="legs"
+            label="Looktype Legs"
+            variant="filled"
+            value={monsterData.looktype.legs}
+            onChange={handleNumberChange}
+            required
+            fullWidth
+          />
+          <TextField
+            type="number"
+            name="feet"
+            label="Looktype Feet"
+            variant="filled"
+            value={monsterData.looktype.feet}
+            onChange={handleNumberChange}
+            required
+            fullWidth
+          />
+          <TextField
+            type="number"
+            name="addons"
+            label="Looktype Addons"
+            variant="filled"
+            value={monsterData.looktype.addons}
+            onChange={handleNumberChange}
+            required
+            fullWidth
+          />
+          <TextField
+            type="number"
+            name="typeex"
+            label="Looktype Typeex"
+            variant="filled"
+            value={monsterData.looktype.typeex}
+            onChange={handleNumberChange}
+            required
+            fullWidth
+          />
+          <TextField
+            type="number"
+            name="corpse"
+            label="Looktype Corpse"
+            variant="filled"
+            value={monsterData.looktype.corpse}
+            onChange={handleNumberChange}
+            required
+            fullWidth
+          />
         </Box>
         {/* Summons */}
         <Box
@@ -268,7 +622,7 @@ const AddMonsters: React.FC<AddMonstersProps> = ({ initialData }) => {
         </Box>
       </form>
 
-      {xmlString && (
+      {/*  {xmlString && (
         <Box
           sx={{
             padding: "0 1rem",
@@ -287,7 +641,7 @@ const AddMonsters: React.FC<AddMonstersProps> = ({ initialData }) => {
             width="99%"
           />
         </Box>
-      )}
+      )} */}
     </>
   );
 };

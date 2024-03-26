@@ -6,11 +6,11 @@ const useGenerateXML = (data: DataMonsterBasics) => {
     data.race
   }" experience="${data.experience}" speed="${data.speed}">
 	<health now="${data.heathMin}" max="${data.heathMax}"/>
-	<look type="${data.looktypeType}" head="${data.looktypeHead}" body="${
-    data.looktypeBody
-  }" legs="${data.looktypeLegs}" feet="${data.looktypeFeet}" addons="${
-    data.looktypeAddons
-  }" typeex="${data.looktypeTypeex}" corpse="${data.looktypeCorpse}"/>
+	<look type="${data.looktype.type}" head="${data.looktype.head}" body="${
+    data.looktype.body
+  }" legs="${data.looktype.legs}" feet="${data.looktype.feet}" addons="${
+    data.looktype.addons
+  }" typeex="${data.looktype.typeex}" corpse="${data.looktype.corpse}"/>
 	<targetchange interval="4000" chance="10"/>
 	<flags>
 		<flag summonable="0"/>

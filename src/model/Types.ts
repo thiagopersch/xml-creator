@@ -6,14 +6,16 @@ export type DataMonsterBasics = {
   speed?: number;
   heathMin?: number;
   heathMax?: number;
-  looktypeType?: number;
-  looktypeHead?: number;
-  looktypeBody?: number;
-  looktypeLegs?: number;
-  looktypeFeet?: number;
-  looktypeAddons?: number;
-  looktypeTypeex?: number;
-  looktypeCorpse?: number;
+  looktype: {
+    type?: number;
+    head?: number;
+    body?: number;
+    legs?: number;
+    feet?: number;
+    addons?: number;
+    typeex?: number;
+    corpse?: number;
+  };
   isAttack?: boolean;
   attack: {
     name?: string;
