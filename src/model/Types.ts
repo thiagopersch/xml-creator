@@ -1,3 +1,17 @@
+export type AttackType = {
+  name?: string;
+  interval?: number;
+  minValueAttack?: number;
+  maxValueAttack?: number;
+};
+
+export type SummonsType = {
+  name?: string;
+  interval?: number;
+  chance?: number;
+  qtdMax?: number;
+};
+
 export type DataMonsterBasics = {
   name?: string;
   description?: string;

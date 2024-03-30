@@ -30,7 +30,7 @@ const useGenerateXML = (data: DataMonsterBasics) => {
 		<flag staticattack="90"/>
 		<flag runonhealth="20"/>
 		<flag lureable="0"/>
-	<flag walkable="0"/>
+		<flag walkable="0"/>
 		<flag skull="0"/>
 		<flag shield="0"/>
 		<flag emblem="0"/>
@@ -104,14 +104,14 @@ const useGenerateXML = (data: DataMonsterBasics) => {
 	</elements>
   ${
     data.summons?.length > 0
-      ? `<summons>
+      ? `  <summons>
 		    ${data.summons
           .map(
-            (summon: any) =>
+            (summon) =>
               `<summon name="${summon.name}" interval="${summon.interval}" chance="${summon.chance}" max="${summon.qtdMax}"/>`
           )
-          .join("")}
-	    </summons>`
+          .join("\n            ")}
+	  </summons>`
       : ""
   }
 	${

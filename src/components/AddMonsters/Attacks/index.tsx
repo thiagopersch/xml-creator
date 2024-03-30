@@ -1,6 +1,6 @@
 "use client";
 
-import { AttackType } from "@/hooks/useGenerateXML";
+import { AttackType } from "@/model/Types";
 import { Remove } from "@mui/icons-material";
 import {
   Box,
@@ -34,11 +34,13 @@ const Attacks = ({
       <FormLabel sx={{ margin: "1rem 0" }}>Ataque: {attack.name}</FormLabel>
       <FormGroup>
         <Box
-          display="grid"
-          gridTemplateColumns="1fr 1fr 1fr 1fr"
-          gap="1rem"
-          margin="1rem 0"
-          justifyContent="start"
+          sx={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr 1fr 1fr",
+            gap: "1rem",
+            margin: "1rem 0",
+            justifyContent: "start",
+          }}
         >
           <TextField
             type="text"
@@ -78,7 +80,7 @@ const Attacks = ({
           />
         </Box>
         <Button onClick={() => onRemoveAttack(index)} startIcon={<Remove />}>
-          Remove Attack
+          Remover
         </Button>
       </FormGroup>
     </FormControl>

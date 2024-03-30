@@ -1,6 +1,7 @@
 "use client";
 
 import useGenerateXML from "@/hooks/useGenerateXML";
+import { Editor } from "@monaco-editor/react";
 import {
   Box,
   Button,
@@ -16,8 +17,6 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import Attacks from "./Attacks";
-import Elements from "./Elements";
-import Immunities from "./Immunities";
 import Loots from "./Loots";
 import Summons from "./Summons";
 
@@ -27,8 +26,10 @@ export type DataMonsterBasics = {
   race?: string;
   experience?: number;
   speed?: number;
-  heathMin?: number;
-  heathMax?: number;
+  heath: {
+    min?: number;
+    max?: number;
+  };
   looktype: {
     type: number;
     head: number;
@@ -108,8 +109,10 @@ const AddMonsters = () => {
     race: "",
     experience: 0,
     speed: 0,
-    heathMin: 0,
-    heathMax: 0,
+    heath: {
+      min: 0,
+      max: 0,
+    },
     looktype: {
       type: 0,
       head: 0,
@@ -215,9 +218,21 @@ const AddMonsters = () => {
     setMonsterData((prevmonstro) => ({
       ...prevmonstro,
       [name]: Number(value),
+      heath: {
+        ...prevmonstro.heath,
+        [name]: Number(value),
+      },
       looktype: {
         ...prevmonstro.looktype,
-        [name]: Number(value), // Converte o valor para número
+        [name]: Number(value),
+      },
+      immunities: {
+        ...prevmonstro.immunities,
+        [name]: Number(value),
+      },
+      elements: {
+        ...prevmonstro.elements,
+        [name]: Number(value),
       },
     }));
   };
@@ -226,8 +241,34 @@ const AddMonsters = () => {
   const [hasImmunities, setHasImmunities] = useState<boolean>(
     !!monsterData?.isImmunities
   );
+
   const [hasElements, setHasElements] = useState<boolean>(
     !!monsterData?.isElements
+  );
+
+  const [hasIsDefenses, setHasIsDefenses] = useState<boolean>(
+    !!monsterData.isDefenses
+  );
+
+  const [hasIsSummons, setHasIsSummons] = useState<boolean>(
+    !!monsterData.isSummons
+  );
+
+  const [hasIsAttack, setHasIsAttack] = useState<boolean>(
+    !!monsterData.isAttack
+  );
+
+  const [hasIsLoot, setHasIsLoot] = useState<boolean>(!!monsterData.isLoot);
+
+  const [summons, setSummons] = useState<DataMonsterBasics[]>(
+    monsterData?.summons?.map((summon: any) => ({ ...summon })) || [
+      {
+        name: "",
+        interval: 0,
+        chance: 0,
+        qtdMax: 0,
+      },
+    ]
   );
 
   const [attacks, setAttacks] = useState<DataMonsterBasics[]>(
@@ -240,6 +281,7 @@ const AddMonsters = () => {
       },
     ]
   );
+
   const [loots, setLoots] = useState<any[]>([
     { name: "", isCountMax: false, countmax: 0, chance: 0 },
   ]);
@@ -256,10 +298,41 @@ const AddMonsters = () => {
     setHasElements(event.target.checked);
   };
 
+  const handleCheckboxisSummonsChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setHasIsSummons(event.target.checked);
+  };
+
+  const handleCheckboxisAttackChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setHasIsAttack(event.target.checked);
+  };
+
+  const handleCheckboxisLootChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setHasIsLoot(event.target.checked);
+  };
+
+  const handleCheckboxisDefencesChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setHasIsDefenses(event.target.checked);
+  };
+
   const handleAddAttack = () => {
     setAttacks((prevAttacks: any) => [
       ...prevAttacks,
       { name: "", interval: 0, minValueAttack: 0, maxValueAttack: 0 },
+    ]);
+  };
+
+  const handleAddSummons = () => {
+    setSummons((prevSummons: any) => [
+      ...prevSummons,
+      { name: "", interval: 0, chance: 0, qtdMax: 0 },
     ]);
   };
 
@@ -270,14 +343,16 @@ const AddMonsters = () => {
     ]);
   };
 
+  const handleSummonChange = (index: number, updatedSummon: any) => {
+    setSummons((prevSummons) =>
+      prevSummons.map((summon, i) => (i === index ? updatedSummon : summon))
+    );
+  };
+
   const handleAttackChange = (index: number, updatedAttack: any) => {
     setAttacks((prevAttacks) =>
       prevAttacks.map((attack, i) => (i === index ? updatedAttack : attack))
     );
-  };
-
-  const handleRemoveAttack = (index: number) => {
-    setAttacks((prevAttacks) => prevAttacks.filter((_, i) => i !== index));
   };
 
   const handleLootChange = (index: number, updatedLoot: any) => {
@@ -286,8 +361,16 @@ const AddMonsters = () => {
     );
   };
 
+  const handleRemoveAttack = (index: number) => {
+    setAttacks((prevAttacks) => prevAttacks.filter((_, i) => i !== index));
+  };
+
   const handleRemoveLoot = (index: number) => {
     setLoots((prevLoots) => prevLoots.filter((_, i) => i !== index));
+  };
+
+  const handleRemoveSummon = (index: number) => {
+    setSummons((prevSummons) => prevSummons.filter((_, i) => i !== index));
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -296,6 +379,12 @@ const AddMonsters = () => {
     const data = {
       ...monsterData,
       attack: attacks,
+      loot: loots,
+      summons: summons,
+      isSummons: hasIsSummons,
+      isAttack: hasIsAttack,
+      isLoot: hasIsLoot,
+      isDefenses: hasIsDefenses,
       isImmunities: hasImmunities,
       isElements: hasElements,
     };
@@ -386,21 +475,21 @@ const AddMonsters = () => {
           >
             <TextField
               type="number"
-              name="heathMin"
+              name="min"
               label="Health Min"
               variant="filled"
-              value={monsterData.heathMin}
-              onChange={handleChange}
+              value={monsterData.heath.min}
+              onChange={handleNumberChange}
               fullWidth
               required
             />
             <TextField
               type="number"
-              name="heathMax"
+              name="max"
               label="Health Max"
               variant="filled"
-              value={monsterData.heathMax}
-              onChange={handleChange}
+              value={monsterData.heath.max}
+              onChange={handleNumberChange}
               required
               fullWidth
             />
@@ -494,17 +583,6 @@ const AddMonsters = () => {
             fullWidth
           />
         </Box>
-        {/* Summons */}
-        <Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: "1fr",
-            gap: "0.5rem",
-            padding: "1rem 0",
-          }}
-        >
-          <Summons />
-        </Box>
         {/* Immunities and Elements */}
         <Box sx={{ display: "flex", flexDirection: "column" }}>
           {/* Immunities */}
@@ -521,12 +599,161 @@ const AddMonsters = () => {
             <Box
               sx={{
                 display: "grid",
-                gridTemplateColumns: "1fr",
+                gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr",
                 gap: "0.5rem",
                 padding: "1rem 0",
               }}
             >
-              <Immunities />
+              <TextField
+                type="number"
+                name="physical"
+                label="Immunities Physical"
+                variant="filled"
+                value={monsterData.immunities?.physical}
+                onChange={handleNumberChange}
+                required
+                fullWidth
+              />
+              <TextField
+                type="number"
+                name="energy"
+                label="Immunities Energy"
+                variant="filled"
+                value={monsterData.immunities?.energy}
+                onChange={handleNumberChange}
+                required
+                fullWidth
+              />
+              <TextField
+                type="number"
+                name="fire"
+                label="Immunities Fire"
+                variant="filled"
+                value={monsterData.immunities?.fire}
+                onChange={handleNumberChange}
+                required
+                fullWidth
+              />
+              <TextField
+                type="number"
+                name="poison"
+                label="Immunities Poison"
+                variant="filled"
+                value={monsterData.immunities?.poison}
+                onChange={handleNumberChange}
+                required
+                fullWidth
+              />
+              <TextField
+                type="number"
+                name="earth"
+                label="Immunities Earth"
+                variant="filled"
+                value={monsterData.immunities?.earth}
+                onChange={handleNumberChange}
+                required
+                fullWidth
+              />
+              <TextField
+                type="number"
+                name="ice"
+                label="Immunities Ice"
+                variant="filled"
+                value={monsterData.immunities?.ice}
+                onChange={handleNumberChange}
+                required
+                fullWidth
+              />
+              <TextField
+                type="number"
+                name="holy"
+                label="Immunities Holy"
+                variant="filled"
+                value={monsterData.immunities?.holy}
+                onChange={handleNumberChange}
+                required
+                fullWidth
+              />
+              <TextField
+                type="number"
+                name="death"
+                label="Immunities Death"
+                variant="filled"
+                value={monsterData.immunities?.death}
+                onChange={handleNumberChange}
+                required
+                fullWidth
+              />
+              <TextField
+                type="number"
+                name="drown"
+                label="Immunities Drown"
+                variant="filled"
+                value={monsterData.immunities?.drown}
+                onChange={handleNumberChange}
+                required
+                fullWidth
+              />
+              <TextField
+                type="number"
+                name="lifedrain"
+                label="Immunities Lifedrain"
+                variant="filled"
+                value={monsterData.immunities?.lifedrain}
+                onChange={handleNumberChange}
+                required
+                fullWidth
+              />
+              <TextField
+                type="number"
+                name="manadrain"
+                label="Immunities Manadrain"
+                variant="filled"
+                value={monsterData.immunities?.manadrain}
+                onChange={handleNumberChange}
+                required
+                fullWidth
+              />
+              <TextField
+                type="number"
+                name="outfit"
+                label="Immunities Outfit"
+                variant="filled"
+                value={monsterData.immunities?.outfit}
+                onChange={handleNumberChange}
+                required
+                fullWidth
+              />
+              <TextField
+                type="number"
+                name="drunk"
+                label="Immunities Drunk"
+                variant="filled"
+                value={monsterData.immunities?.drunk}
+                onChange={handleNumberChange}
+                required
+                fullWidth
+              />
+              <TextField
+                type="number"
+                name="invisible"
+                label="Immunities Invisible"
+                variant="filled"
+                value={monsterData.immunities?.invisible}
+                onChange={handleNumberChange}
+                required
+                fullWidth
+              />
+              <TextField
+                type="number"
+                name="paralyze"
+                label="Immunities Paralyze"
+                variant="filled"
+                value={monsterData.immunities?.paralyze}
+                onChange={handleNumberChange}
+                required
+                fullWidth
+              />
             </Box>
           )}
 
@@ -544,66 +771,283 @@ const AddMonsters = () => {
             <Box
               sx={{
                 display: "grid",
-                gridTemplateColumns: "1fr",
+                gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr",
                 gap: "0.5rem",
                 padding: "1rem 0",
               }}
             >
-              <Elements />
+              <TextField
+                type="number"
+                name="firePercent"
+                label="Elements Fire Percent"
+                variant="filled"
+                value={monsterData.elements?.firePercent}
+                onChange={handleNumberChange}
+                required
+                fullWidth
+              />
+              <TextField
+                type="number"
+                name="energyPercent"
+                label="Elements Energy Percent"
+                variant="filled"
+                value={monsterData.elements?.energyPercent}
+                onChange={handleNumberChange}
+                required
+                fullWidth
+              />
+              <TextField
+                type="number"
+                name="icePercent"
+                label="Elements Ice Percent"
+                variant="filled"
+                value={monsterData.elements?.icePercent}
+                onChange={handleNumberChange}
+                required
+                fullWidth
+              />
+              <TextField
+                type="number"
+                name="poisonPercent"
+                label="Elements Poison Percent"
+                variant="filled"
+                value={monsterData.elements?.poisonPercent}
+                onChange={handleNumberChange}
+                required
+                fullWidth
+              />
+              <TextField
+                type="number"
+                name="holyPercent"
+                label="Elements Holy Percent"
+                variant="filled"
+                value={monsterData.elements?.holyPercent}
+                onChange={handleNumberChange}
+                required
+                fullWidth
+              />
+              <TextField
+                type="number"
+                name="deathPercent"
+                label="Elements Death Percent"
+                variant="filled"
+                value={monsterData.elements?.deathPercent}
+                onChange={handleNumberChange}
+                required
+                fullWidth
+              />
+              <TextField
+                type="number"
+                name="drownPercent"
+                label="Elements Drown Percent"
+                variant="filled"
+                value={monsterData.elements?.drownPercent}
+                onChange={handleNumberChange}
+                required
+                fullWidth
+              />
+              <TextField
+                type="number"
+                name="earthPercent"
+                label="Elements Earth Percent"
+                variant="filled"
+                value={monsterData.elements?.earthPercent}
+                onChange={handleNumberChange}
+                required
+                fullWidth
+              />
+              <TextField
+                type="number"
+                name="physicalPercent"
+                label="Elements Physical Percent"
+                variant="filled"
+                value={monsterData.elements?.physicalPercent}
+                onChange={handleNumberChange}
+                required
+                fullWidth
+              />
+              <TextField
+                type="number"
+                name="lifedrainPercent"
+                label="Elements Lifedrain Percent"
+                variant="filled"
+                value={monsterData.elements?.lifedrainPercent}
+                onChange={handleNumberChange}
+                required
+                fullWidth
+              />
+              <TextField
+                type="number"
+                name="manadrainPercent"
+                label="Elements Manadrain Percent"
+                variant="filled"
+                value={monsterData.elements?.manadrainPercent}
+                onChange={handleNumberChange}
+                required
+                fullWidth
+              />
+              <TextField
+                type="number"
+                name="healingPercent"
+                label="Elements Healing Percent"
+                variant="filled"
+                value={monsterData.elements?.healingPercent}
+                onChange={handleNumberChange}
+                required
+                fullWidth
+              />
+              <TextField
+                type="number"
+                name="undefinedPercent"
+                label="Elements Undefined Percent"
+                variant="filled"
+                value={monsterData.elements?.undefinedPercent}
+                onChange={handleNumberChange}
+                required
+                fullWidth
+              />
             </Box>
           )}
         </Box>
-        {/* Attacks */}
-        <Box
-          display="flex"
-          flexDirection="column"
-          gap="1rem"
-          margin="1rem 0"
-          justifyContent="start"
-        >
-          <Box sx={{ display: "flex", gap: "1rem" }}>
-            <Typography variant="h5" color="primary.light" fontWeight="bold">
-              Attacks
-            </Typography>
-            <Button variant="outlined" onClick={handleAddAttack}>
-              Adicionar Attack
-            </Button>
-          </Box>
-          {attacks.map((attack, index) => (
-            <Attacks
-              key={index}
-              index={index}
-              attack={attack}
-              onAttackChange={handleAttackChange}
-              onRemoveAttack={handleRemoveAttack}
-            />
-          ))}
+        {/* Defenses */}
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={hasIsDefenses}
+                onChange={handleCheckboxisDefencesChange}
+              />
+            }
+            label="Possui defense?"
+          />
         </Box>
-        {/* Loots */}
-        <Box
-          display="flex"
-          flexDirection="column"
-          gap="1rem"
-          margin="1rem 0"
-          justifyContent="start"
-        >
-          <Box sx={{ display: "flex", gap: "1rem" }}>
-            <Typography variant="h5" color="primary.light" fontWeight="bold">
-              Loots
-            </Typography>
-            <Button variant="outlined" onClick={handleAddLoot}>
-              Adicionar Loot
-            </Button>
-          </Box>
-          {loots.map((loot, index) => (
-            <Loots
-              key={index}
-              index={index}
-              loot={loot}
-              onLootChange={handleLootChange}
-              onRemoveLoot={handleRemoveLoot}
-            />
-          ))}
+        {/* Possui summons */}
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={hasIsSummons}
+                onChange={handleCheckboxisSummonsChange}
+              />
+            }
+            label="Possui summons?"
+          />
+          {hasIsSummons && (
+            <Box
+              display="flex"
+              flexDirection="column"
+              gap="1rem"
+              margin="1rem 0"
+              justifyContent="start"
+            >
+              <Box sx={{ display: "flex", gap: "1rem" }}>
+                <Typography
+                  variant="h5"
+                  color="primary.light"
+                  fontWeight="bold"
+                >
+                  Summons
+                </Typography>
+                <Button variant="outlined" onClick={handleAddSummons}>
+                  Adicionar Summons
+                </Button>
+              </Box>
+              {summons.map((summon, index) => (
+                <Summons
+                  key={index}
+                  index={index}
+                  summons={summon}
+                  onAttackChange={handleSummonChange}
+                  onRemoveAttack={handleRemoveSummon}
+                />
+              ))}
+            </Box>
+          )}
+        </Box>
+        {/* Possui Attacks */}
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={hasIsAttack}
+                onChange={handleCheckboxisAttackChange}
+              />
+            }
+            label="Possui ataques?"
+          />
+          {hasIsAttack && (
+            <Box
+              display="flex"
+              flexDirection="column"
+              gap="1rem"
+              margin="1rem 0"
+              justifyContent="start"
+            >
+              <Box sx={{ display: "flex", gap: "1rem" }}>
+                <Typography
+                  variant="h5"
+                  color="primary.light"
+                  fontWeight="bold"
+                >
+                  Attacks
+                </Typography>
+                <Button variant="outlined" onClick={handleAddAttack}>
+                  Adicionar Attack
+                </Button>
+              </Box>
+              {attacks.map((attack, index) => (
+                <Attacks
+                  key={index}
+                  index={index}
+                  attack={attack}
+                  onAttackChange={handleAttackChange}
+                  onRemoveAttack={handleRemoveAttack}
+                />
+              ))}
+            </Box>
+          )}
+        </Box>
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={hasIsLoot}
+                onChange={handleCheckboxisLootChange}
+              />
+            }
+            label="Possui loots?"
+          />
+          {hasIsLoot && (
+            <Box
+              display="flex"
+              flexDirection="column"
+              gap="1rem"
+              margin="1rem 0"
+              justifyContent="start"
+            >
+              <Box sx={{ display: "flex", gap: "1rem" }}>
+                <Typography
+                  variant="h5"
+                  color="primary.light"
+                  fontWeight="bold"
+                >
+                  Loots
+                </Typography>
+                <Button variant="outlined" onClick={handleAddLoot}>
+                  Adicionar Loot
+                </Button>
+              </Box>
+              {loots.map((loot, index) => (
+                <Loots
+                  key={index}
+                  index={index}
+                  loot={loot}
+                  onLootChange={handleLootChange}
+                  onRemoveLoot={handleRemoveLoot}
+                />
+              ))}
+            </Box>
+          )}
         </Box>
         <Box
           display="flex"
@@ -622,7 +1066,7 @@ const AddMonsters = () => {
         </Box>
       </form>
 
-      {/*  {xmlString && (
+      {xmlString && (
         <Box
           sx={{
             padding: "0 1rem",
@@ -641,7 +1085,7 @@ const AddMonsters = () => {
             width="99%"
           />
         </Box>
-      )} */}
+      )}
     </>
   );
 };
