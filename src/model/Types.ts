@@ -18,8 +18,10 @@ export type DataMonsterBasics = {
   race?: string;
   experience?: number;
   speed?: number;
-  heathMin?: number;
-  heathMax?: number;
+  heath: {
+    min?: number;
+    max?: number;
+  };
   looktype: {
     type?: number;
     head?: number;
@@ -80,7 +82,7 @@ export type DataMonsterBasics = {
     qtdMax?: number;
   }[];
   isVoices?: boolean;
-  voices: {
+  voices?: {
     message?: string;
   };
   isLoot?: boolean;

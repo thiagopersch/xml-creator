@@ -5,7 +5,7 @@ const useGenerateXML = (data: DataMonsterBasics) => {
 <monster name="${data.name}" description="a ${data.description}" race="${
     data.race
   }" experience="${data.experience}" speed="${data.speed}">
-	<health now="${data.heathMin}" max="${data.heathMax}"/>
+	<health now="${data.heath.min}" max="${data.heath.max}"/>
 	<look type="${data.looktype.type}" head="${data.looktype.head}" body="${
     data.looktype.body
   }" legs="${data.looktype.legs}" feet="${data.looktype.feet}" addons="${
@@ -39,7 +39,7 @@ const useGenerateXML = (data: DataMonsterBasics) => {
 		<flag canwalkonpoison="0"/>
 	</flags>
 	${
-    data.attack?.length > 0
+    data.attack?.length > 0 && data.isAttack
       ? `<attacks>
           ${data.attack
             .map(
@@ -103,7 +103,7 @@ const useGenerateXML = (data: DataMonsterBasics) => {
 		<element undefinedPercent="${data.elements?.undefinedPercent}"/>
 	</elements>
   ${
-    data.summons?.length > 0
+    data.summons?.length > 0 && data.isSummons
       ? `  <summons>
 		    ${data.summons
           .map(
@@ -115,14 +115,14 @@ const useGenerateXML = (data: DataMonsterBasics) => {
       : ""
   }
 	${
-    data.voices
+    data.voices?.message
       ? `<voices interval="5000" chance="10">
-		      <voice sentence="${data.voices.message}" yell="1"/>
+		      <voice sentence="${data.voices?.message}" yell="1"/>
 	      </voices>`
       : ""
   }
   ${
-    data.loot?.length > 0
+    data.loot?.length > 0 && data.isLoot
       ? `  <loot>
           ${data.loot
             .map((loot) =>

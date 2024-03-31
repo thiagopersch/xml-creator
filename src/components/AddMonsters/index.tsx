@@ -90,7 +90,7 @@ export type DataMonsterBasics = {
     qtdMax?: number;
   }[];
   isVoices?: boolean;
-  voices: {
+  voices?: {
     message?: string;
   };
   isLoot?: boolean;
@@ -203,6 +203,20 @@ const AddMonsters = () => {
     setMonsterData((prevmonstro) => ({
       ...prevmonstro,
       [name]: value,
+      voices: {
+        ...prevmonstro.voices,
+        [name]: value,
+      },
+    }));
+  };
+
+  const handleChangeVoice = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setMonsterData((prevmonstro: DataMonsterBasics) => ({
+      ...prevmonstro,
+      voices: {
+        [name]: value,
+      },
     }));
   };
 
@@ -259,6 +273,9 @@ const AddMonsters = () => {
   );
 
   const [hasIsLoot, setHasIsLoot] = useState<boolean>(!!monsterData.isLoot);
+  const [hasIsVoices, setHasIsVoices] = useState<boolean>(
+    !!monsterData.isVoices
+  );
 
   const [summons, setSummons] = useState<DataMonsterBasics[]>(
     monsterData?.summons?.map((summon: any) => ({ ...summon })) || [
@@ -320,6 +337,21 @@ const AddMonsters = () => {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setHasIsDefenses(event.target.checked);
+  };
+
+  const handleCheckboxisVoicesChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setHasIsVoices(event.target.checked);
+    if (!event.target.checked) {
+      setMonsterData((prevMonsterData) => ({
+        ...prevMonsterData,
+        voices: {
+          ...prevMonsterData.voices,
+          message: "",
+        },
+      }));
+    }
   };
 
   const handleAddAttack = () => {
@@ -384,6 +416,7 @@ const AddMonsters = () => {
       isSummons: hasIsSummons,
       isAttack: hasIsAttack,
       isLoot: hasIsLoot,
+      isVoice: hasIsVoices,
       isDefenses: hasIsDefenses,
       isImmunities: hasImmunities,
       isElements: hasElements,
@@ -429,7 +462,7 @@ const AddMonsters = () => {
               required
               fullWidth
             />
-            <FormControl fullWidth required>
+            <FormControl variant="filled" fullWidth required>
               <InputLabel id="select-races">Raças</InputLabel>
               <Select
                 labelId="select-races"
@@ -452,7 +485,7 @@ const AddMonsters = () => {
               label="Experience"
               variant="filled"
               value={monsterData.experience}
-              onChange={handleChange}
+              onChange={handleNumberChange}
               fullWidth
               required
             />
@@ -462,7 +495,7 @@ const AddMonsters = () => {
               label="Speed"
               variant="filled"
               value={monsterData.speed}
-              onChange={handleChange}
+              onChange={handleNumberChange}
               fullWidth
               required
             />
@@ -593,7 +626,7 @@ const AddMonsters = () => {
                 onChange={handleCheckboxImmunitiesChange}
               />
             }
-            label="Possui Imunidades?"
+            label="Possui imunidades?"
           />
           {hasImmunities && (
             <Box
@@ -765,7 +798,7 @@ const AddMonsters = () => {
                 onChange={handleCheckboxElementsChange}
               />
             }
-            label="Possui Elements?"
+            label="Possui elementos?"
           />
           {hasElements && (
             <Box
@@ -909,6 +942,49 @@ const AddMonsters = () => {
             </Box>
           )}
         </Box>
+        {/* Possui Attacks */}
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={hasIsAttack}
+                onChange={handleCheckboxisAttackChange}
+              />
+            }
+            label="Possui ataques?"
+          />
+          {hasIsAttack && (
+            <Box
+              display="flex"
+              flexDirection="column"
+              gap="1rem"
+              margin="1rem 0"
+              justifyContent="start"
+            >
+              <Box sx={{ display: "flex", gap: "1rem" }}>
+                <Typography
+                  variant="h5"
+                  color="primary.light"
+                  fontWeight="bold"
+                >
+                  Attacks
+                </Typography>
+                <Button variant="outlined" onClick={handleAddAttack}>
+                  Adicionar Attack
+                </Button>
+              </Box>
+              {attacks.map((attack, index) => (
+                <Attacks
+                  key={index}
+                  index={index}
+                  attack={attack}
+                  onAttackChange={handleAttackChange}
+                  onRemoveAttack={handleRemoveAttack}
+                />
+              ))}
+            </Box>
+          )}
+        </Box>
         {/* Defenses */}
         <Box sx={{ display: "flex", flexDirection: "column" }}>
           <FormControlLabel
@@ -918,7 +994,7 @@ const AddMonsters = () => {
                 onChange={handleCheckboxisDefencesChange}
               />
             }
-            label="Possui defense?"
+            label="Possui defensa?"
           />
         </Box>
         {/* Possui summons */}
@@ -964,49 +1040,31 @@ const AddMonsters = () => {
             </Box>
           )}
         </Box>
-        {/* Possui Attacks */}
+        {/* Possui voices */}
         <Box sx={{ display: "flex", flexDirection: "column" }}>
           <FormControlLabel
             control={
               <Checkbox
-                checked={hasIsAttack}
-                onChange={handleCheckboxisAttackChange}
+                checked={hasIsVoices}
+                onChange={handleCheckboxisVoicesChange}
               />
             }
-            label="Possui ataques?"
+            label="Possui vozes?"
           />
-          {hasIsAttack && (
-            <Box
-              display="flex"
-              flexDirection="column"
-              gap="1rem"
-              margin="1rem 0"
-              justifyContent="start"
-            >
-              <Box sx={{ display: "flex", gap: "1rem" }}>
-                <Typography
-                  variant="h5"
-                  color="primary.light"
-                  fontWeight="bold"
-                >
-                  Attacks
-                </Typography>
-                <Button variant="outlined" onClick={handleAddAttack}>
-                  Adicionar Attack
-                </Button>
-              </Box>
-              {attacks.map((attack, index) => (
-                <Attacks
-                  key={index}
-                  index={index}
-                  attack={attack}
-                  onAttackChange={handleAttackChange}
-                  onRemoveAttack={handleRemoveAttack}
-                />
-              ))}
-            </Box>
+          {hasIsVoices && (
+            <TextField
+              type="text"
+              name="message"
+              label="Menssagem da voz"
+              variant="filled"
+              value={monsterData.voices?.message}
+              onChange={handleChangeVoice}
+              required
+              fullWidth
+            />
           )}
         </Box>
+        {/* Possui loots */}
         <Box sx={{ display: "flex", flexDirection: "column" }}>
           <FormControlLabel
             control={
@@ -1049,6 +1107,7 @@ const AddMonsters = () => {
             </Box>
           )}
         </Box>
+        {/* Button and XML */}
         <Box
           display="flex"
           justifyContent="center"
@@ -1069,7 +1128,6 @@ const AddMonsters = () => {
       {xmlString && (
         <Box
           sx={{
-            padding: "0 1rem",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -1082,7 +1140,7 @@ const AddMonsters = () => {
             defaultLanguage="xml"
             theme="vs-dark"
             loading="Gerando..."
-            width="99%"
+            width="100%"
           />
         </Box>
       )}
