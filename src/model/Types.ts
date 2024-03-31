@@ -12,6 +12,13 @@ export type SummonsType = {
   qtdMax?: number;
 };
 
+export type LootType = {
+  name?: string;
+  isCountMax?: boolean;
+  countmax?: number;
+  chance?: number;
+};
+
 export type DataMonsterBasics = {
   name?: string;
   description?: string;

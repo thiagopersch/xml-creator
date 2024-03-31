@@ -422,8 +422,6 @@ const AddMonsters = () => {
       isElements: hasElements,
     };
 
-    console.log({ data });
-
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const generatedXmlString = useGenerateXML(data);
 

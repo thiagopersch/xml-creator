@@ -1,4 +1,4 @@
-import { LootType } from "@/hooks/useGenerateXML";
+import { LootType } from "@/model/Types";
 import {
   Box,
   Button,
@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 
-type LootProps = LootType & {
+type LootProps = {
   index: number;
   loot: LootType;
   onLootChange: (index: number, updatedLoot: LootType) => void;
@@ -31,7 +31,7 @@ const Loots = ({ index, loot, onLootChange, onRemoveLoot }: LootProps) => {
     setHasCount(checked);
 
     if (checked) {
-      onLootChange(index, { ...loot, isCountMax: checked, countmax: "0" });
+      onLootChange(index, { ...loot, isCountMax: checked, countmax: 0 });
     } else {
       onLootChange(index, { ...loot, isCountMax: checked });
     }
@@ -82,7 +82,10 @@ const Loots = ({ index, loot, onLootChange, onRemoveLoot }: LootProps) => {
               variant="filled"
               value={loot.countmax}
               onChange={(e) =>
-                onLootChange(index, { ...loot, countmax: e.target.value })
+                onLootChange(index, {
+                  ...loot,
+                  countmax: Number(e.target.value),
+                })
               }
               fullWidth
               required
